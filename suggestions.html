@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>~fabian // suggestions</title>
+<link rel="stylesheet" href="css/simple.css">
+</head>
+<body>
+<div class="wrap">
+  <nav class="nav">
+    <a class="home" href="/index.html">~/fabian</a>
+    <a href="/travelmap.html">/travelmap</a>
+    <a href="/suggestions.html">/suggestions</a>
+    <a href="/music.html">/music</a>
+    <a href="/desktop.html">/desktop</a>
+  </nav>
+  <div class="main">
+    <div class="head"><h1>suggestions_</h1></div>
+
+    <div class="quote">
+      <span class="speaker">Sheldon:</span> Oh, President Siebert, I assume you’d like to respond to one of the suggestions I put in the box by your office.<br>
+      <span class="speaker">Siebert:</span> No, and stop installing suggestion boxes everywhere.
+      <span class="src">The Big Bang Theory · S05E16</span>
+    </div>
+
+    <div class="card" id="sg-card">
+        <div class="h">Input your suggestion</div>
+                <span class="note">// any suggestions? (anime, musik, or anything else)</span>
+
+      <label>Name (optional)</label>
+      <input type="text" id="sg-name" placeholder="anonymous" maxlength="40">
+      <label>Category</label>
+      <select id="sg-cat">
+        <option>Anime</option><option>Series</option><option>Film</option>
+        <option>Music</option><option>Other</option>
+      </select>
+      <label>Suggestion</label>
+      <textarea id="sg-text" placeholder="e.g., check out ..." maxlength="400"></textarea>
+
+      <label id="cap-label">// calculate</label>
+      <input type="text" id="sg-captcha" inputmode="numeric" autocomplete="off" placeholder="?">
+
+      <input class="hp" type="text" id="sg-website" tabindex="-1" autocomplete="off" placeholder="Leave empty">
+
+      <button id="sg-send">▶ Submit</button>
+      <div id="sg-status" style="margin-top:10px"></div>
+      <footer>idk what to write here · <script>document.write(new Date().getFullYear())</script></footer>
+
+    </div>
+  </div>
+  
+</div>
+
+<!-- verstecktes iframe: verhindert Weiterleitung zu Google -->
+<iframe name="hidden_iframe" id="hidden_iframe" style="display:none"></iframe>
+
+<script src="js/suggestions.js"></script>
+
+</body>
+</html>

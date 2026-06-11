@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FA|BIAN .ADMIN // Control Panel</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/admin.css">
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="login">
+<div class="login-card">
+<div class="lc-tl"></div>
+<div class="lc-br"></div>
+<div class="login-logo">FA<b>B</b>IAN<span> .ADMIN</span></div>
+<div class="login-sub">SYSTEM ACCESS // AUTHENTICATE</div>
+<div class="fg">
+<label class="fl">Password</label>
+<input type="password" class="fi" id="pw-inp" placeholder="••••••••" autocomplete="current-password">
+</div>
+<button class="btn pri full" onclick="doLogin()">ENTER SYSTEM ▶</button>
+<div class="login-err" id="login-err"></div>
+</div>
+</div>
+
+<!-- PORTAL -->
+<div id="portal">
+
+<!-- SIDEBAR -->
+<div id="sidebar">
+<div class="sb-logo">
+<div class="sb-title">FA<b>B</b>IAN<span> .ADMIN</span></div>
+<div class="sb-ver">ENDFIELD OS // CONTROL PANEL v3</div>
+</div>
+<nav class="sb-nav" id="sb-nav"></nav>
+<div class="sb-foot">
+<div class="save-stat">
+<div class="ss-dot saved" id="ss-dot"></div>
+<span class="ss-txt saved" id="ss-txt">Gespeichert</span>
+</div>
+<button class="btn export" onclick="exportHTML()">▶ &nbsp;Export index.html</button>
+<button class="btn ghost full" onclick="openPreview()">⊙ &nbsp;Vorschau öffnen</button>
+<button class="btn ghost full" style="margin-bottom:0" onclick="doLogout()">⎋ &nbsp;Abmelden</button>
+</div>
+</div>
+
+<!-- CONTENT -->
+<div id="content-wrap">
+<div id="content-area"></div>
+</div>
+
+</div><!-- /portal -->
+
+<script src="js/admin.js"></script>
+</body>
+</html>

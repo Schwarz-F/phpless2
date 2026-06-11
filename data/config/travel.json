@@ -1,0 +1,43 @@
+[
+  {
+    "city": "Berlin",
+    "country": "Deutschland",
+    "lat": 52.52,
+    "lon": 13.405,
+    "status": "visited",
+    "note": "Hauptstadt-Trips",
+    "count": "",
+    "picturecaption": "",
+    "dates": [
+      {
+        "from": "15.05.2024",
+        "to": "20.05.2024",
+        "comment": "Server im Rechenzentrum getauscht.",
+        "images": []
+      },
+      {
+        "from": "02.01.2026",
+        "to": "06.01.2026",
+        "comment": "Silvester/Neujahr nachgefeiert.",
+        "images": [
+          "./data/files/Travel/Berlin/02.01.2026/Unbenannt.PNG"
+        ]
+      }
+    ],
+    "images": []
+  },
+  {
+    "city": "Erkelenz",
+    "country": "Deutschland",
+    "lat": 51.08099,
+    "lon": 6.31607,
+    "status": "home",
+    "note": "Zuhause",
+    "count": "immer",
+    "picturecaption": "David Montes",
+    "dates": [],
+    "images": [
+      "./data/files/Travel/Erkelenz/20220328_1258475623-scaled.jpg.png"
+    ]
+  }
+]
