@@ -5,7 +5,7 @@ set(k,v){try{localStorage.setItem('fos_cache_'+k,JSON.stringify(v));}catch{}}
 
 const esc=s=>(s==null?'':String(s)).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 
-const FEED_PROXY = 'https://thingproxy.freeboard.io/fetch/';
+const FEED_PROXY = 'https://api.allorigins.win/raw?url=';
 const thumb = id => `https://i.ytimg.com/vi/${id}/mqdefault.jpg`;
 
 let CFG={};

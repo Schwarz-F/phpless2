@@ -19,7 +19,9 @@
         "from": "02.01.2026",
         "to": "06.01.2026",
         "comment": "Silvester/Neujahr nachgefeiert.",
-        "images": []
+        "images": [
+          "./data/files/Travel/Berlin/02.01.2026/Unbenannt.PNG"
+        ]
       }
     ],
     "images": []
@@ -34,6 +36,8 @@
     "count": "immer",
     "picturecaption": "David Montes",
     "dates": [],
-    "images": []
+    "images": [
+      "./data/files/Travel/Erkelenz/20220328_1258475623-scaled.jpg.png"
+    ]
   }
 ]
