@@ -5,7 +5,7 @@ set(k,v){try{localStorage.setItem('fos_cache_'+k,JSON.stringify(v));}catch{}}
 
 const esc=s=>(s==null?'':String(s)).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 
-const FEED_PROXY = 'https://api.allorigins.win/raw?url=';
+// Die Thumbnails nutzen wir weiterhin, falls das Python-Skript mal keins liefert
 const thumb = id => `https://i.ytimg.com/vi/${id}/mqdefault.jpg`;
 
 let CFG={};
@@ -25,28 +25,30 @@ async function loadConfig() {
   } catch (e) {
     console.error('config.json nicht ladbar:', e);
   }
-  // music.json hat Vorrang bei gleichen Keys; discordId kommt aus der config.json mit
   return { ...ocfg, ...cfg };
 }
 
-// Songs aus dem öffentlichen YouTube-Playlist-Feed ziehen (KEIN API-Key nötig)
+// Holt die Songs direkt aus den von GitHub Actions generierten lokalen JSON-Dateien
 async function fetchFeedSongs(playlistId){
   const cacheKey = 'ytfeed_' + playlistId;
   const cached = CACHE.get(cacheKey);
+  // Cache bleibt aktiv (1 Stunde), um Traffic auf GitHub Pages zu minimieren
   if (cached && (Date.now() - cached.t) < 3600000) return cached.items;
 
-  const feedUrl = 'https://www.youtube.com/feeds/videos.xml?playlist_id=' + playlistId;
-  const r = await fetch(FEED_PROXY + encodeURIComponent(feedUrl));
-  if (!r.ok) throw new Error('Feed Status ' + r.status);
+  // NEU: Direkter lokaler Fetch aus data/music/ statt über den fehlerhaften Proxy
+  const r = await fetch(`./data/music/${playlistId}.json`, { cache: 'no-cache' });
+  if (!r.ok) throw new Error('Lokale Playlist-Datei fehlt oder Status ' + r.status);
 
-  const xml = new DOMParser().parseFromString(await r.text(), 'text/xml');
-  const items = [...xml.getElementsByTagName('entry')].map(e => ({
-    title: e.getElementsByTagName('title')[0]?.textContent || '',
-    artist: (e.getElementsByTagName('name')[0]?.textContent || '').replace(/ - Topic$/, ''),
-    videoId: e.getElementsByTagName('yt:videoId')[0]?.textContent || ''
+  const localItems = await r.json();
+  
+  // Mapping anpassen, falls Python-Struktur leicht abweicht (id -> videoId)
+  const items = localItems.map(e => ({
+    title: e.title || '',
+    artist: e.artist || '', // Wird im Python-Skript bei Bedarf befüllt
+    videoId: e.id || e.videoId || ''
   })).filter(s => s.title && s.videoId);
 
-  if (!items.length) throw new Error('Feed leer – Playlist wirklich öffentlich?');
+  if (!items.length) throw new Error('Playlist-Datei ist leer');
   CACHE.set(cacheKey, { t: Date.now(), items });
   return items;
 }
@@ -115,8 +117,8 @@ async function togglePlaylist(i){
     body.innerHTML = `<div class="song-list">${songs.map(songRow).join('')}</div>`;
     body.dataset.loaded = '1';
   } catch (e) {
-    console.error('Playlist-Feed fehlgeschlagen:', e);
-    body.innerHTML = '<span class="err">// feed gerade nicht erreichbar</span>';
+    console.error('Laden der Playlist-Datei fehlgeschlagen:', e);
+    body.innerHTML = '<span class="err">// daten gerade nicht verfügbar</span>';
   }
 }
 
@@ -140,7 +142,6 @@ async function fetchNowPlaying(){
 
     const sp = d.data.spotify;
     const acts = d.data.activities || [];
-    // Typ 2 = "Hört zu" (z. B. YouTube Music RPC), Typ 0 = "Spielt"
     const listening = acts.find(a => a.type === 2 && !sp);
     const game = acts.find(a => a.type === 0);
 
@@ -149,7 +150,6 @@ async function fetchNowPlaying(){
     } else if (listening) {
       const img = listening.assets && listening.assets.large_image
         ? actImg(listening.application_id, listening.assets.large_image) : '';
-      // Bei YTM-RPC: details = Songtitel, state = Artist, name = "YouTube Music"
       el.innerHTML = npCard(
         '',
         listening.details || listening.name,
@@ -170,7 +170,6 @@ async function fetchNowPlaying(){
   setTimeout(fetchNowPlaying, 30000);
 }
 
-// Hilfsfunktion: einheitliche Now-Playing-Karte
 function npCard(label, title, subs, img){
   return `<div class="np-card">
     ${img ? `<span class="np-thumb"><img src="${esc(img)}" alt=""></span>` : ''}
@@ -207,35 +206,32 @@ async function render(cfg){
     <a id="playlists"></a>
     <div class="h">ausgewählte playlists</div>
     <span class="note">// draufklicken zum aufklappen</span>
-    <div style="margin-top:12px" id="pl-list">${pls.map(playlistRow).join('') || '<span class="note">— noch keine —</span>'}</div>
-
-    <footer>idk what to write here · ${new Date().getFullYear()}</footer>
+    <div style="margin-top:12px" id="pl-list">${pls.map(playlistRow).join('') || '<span class="note">— keine playlists gefunden —</span>'}</div>
   `;
 
-  document.querySelectorAll('.pl-head').forEach(el => {
-    el.addEventListener('click', () => togglePlaylist(Number(el.dataset.idx)));
-  });
-  pls.forEach((p, i) => loadPlaylistCover(p, i));
-
-  // WICHTIG: vor dem Favoriten-Block aufrufen, damit es auch ohne
-  // favoritesPlaylistId läuft (vorher hat das return das übersprungen)
+  // Start der Datenabrufe
   fetchNowPlaying();
 
-  const favEl = document.getElementById('fav-list');
-  if (!cfg.favoritesPlaylistId) {
-    favEl.innerHTML = '<span class="note">— keine playlist konfiguriert —</span>';
-    return;
+  // Lieblingssongs laden aus favoritesPlaylistId
+  if (cfg.favoritesPlaylistId) {
+    try {
+      const favSongs = await fetchFeedSongs(cfg.favoritesPlaylistId);
+      document.getElementById('fav-list').innerHTML = favSongs.map(songRow).join('');
+    } catch (e) {
+      console.error('Favoriten konnten nicht geladen werden:', e);
+      document.getElementById('fav-list').innerHTML = '<span class="err">// favoriten gerade nicht erreichbar</span>';
+    }
+  } else {
+    document.getElementById('fav-list').innerHTML = '<span class="note">— keine favoriten-playlist konfiguriert —</span>';
   }
-  try {
-    const songs = await fetchFeedSongs(cfg.favoritesPlaylistId);
-    favEl.innerHTML = songs.map(songRow).join('');
-  } catch (e) {
-    console.error('Feed fehlgeschlagen:', e);
-    favEl.innerHTML = '<span class="err">// feed gerade nicht erreichbar</span>';
-  }
-}
 
-loadConfig().then(render).catch(e=>{
-  document.getElementById('app').innerHTML='<span class="err">// hoppla, config kaputt</span>';
-  console.error(e);
-});
+  // Cover für Playlists asynchron im Hintergrund generieren
+  pls.forEach((p, i) => {
+    loadPlaylistCover(p, i);
+    // Event Listener fürs Auf- und Zuklappen hinzufügen
+    const head = document.querySelector(`#pl-item-${i} .pl-head`);
+    if (head) {
+      head.addEventListener('click', () => togglePlaylist(i));
+    }
+  });
+}

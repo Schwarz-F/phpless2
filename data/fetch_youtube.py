@@ -27,12 +27,17 @@ def fetch_and_save_playlist(playlist_id):
             media_group = entry.find('media:group', NAMESPACES)
             thumbnail_url = media_group.find('media:thumbnail', NAMESPACES).attrib['url'] if media_group is not None else ""
 
+                    # Im Python-Skript beim Erstellen der Liste den Artist-Namen mitspeichern:
+            artist_node = entry.find('atom:author/atom:name', NAMESPACES)
+            artist = artist_node.text.replace(' - Topic', '') if artist_node is not None else ""
+
             videos.append({
                 "id": video_id,
                 "title": title,
-                "link": link,
+                "artist": artist, # Damit befüllen Sie s.artist im JS automatisch sauber!
                 "thumbnail": thumbnail_url
             })
+
 
         # NEU: Speichern unter data/music/[PLAYLIST_ID].json
         os.makedirs('data/music', exist_ok=True)
