@@ -3,56 +3,67 @@ import xml.etree.ElementTree as ET
 import json
 import os
 
-# Namespaces für YouTube-RSS
+# Korrekte Namespace-URIs aus dem echten YouTube-RSS-Format
 NAMESPACES = {
-    'atom': 'http://w3.org',
-    'yt': 'http://youtube.com',
-    'media': 'http://yahoo.com'
+    'atom':  'http://www.w3.org/2005/Atom',
+    'yt':    'http://www.youtube.com/xml/schemas/2015',
+    'media': 'http://search.yahoo.com/mrss/'
 }
 
 def fetch_and_save_playlist(playlist_id):
-    """Lädt eine YouTube-Playlist und speichert sie im neuen Ordner."""
-    url = f"https://youtube.com{playlist_id}"
+    # Korrekte YouTube RSS-Feed URL für Playlists
+    url = f"https://www.youtube.com/feeds/videos.xml?playlist_id={playlist_id}"    
     try:
-        response = urllib.request.urlopen(url)
+        req = urllib.request.Request(
+            url,
+            headers={'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'}
+        )
+        response = urllib.request.urlopen(req, timeout=15)
         xml_data = response.read()
         root = ET.fromstring(xml_data)
-        
+
         videos = []
         for entry in root.findall('atom:entry', NAMESPACES):
-            video_id = entry.find('yt:videoId', NAMESPACES).text
-            title = entry.find('atom:title', NAMESPACES).text
-            link = entry.find('atom:link', NAMESPACES).attrib['href']
-            
+            vid_node   = entry.find('yt:videoId', NAMESPACES)
+            title_node = entry.find('atom:title', NAMESPACES)
+            author_node = entry.find('atom:author/atom:name', NAMESPACES)
             media_group = entry.find('media:group', NAMESPACES)
-            thumbnail_url = media_group.find('media:thumbnail', NAMESPACES).attrib['url'] if media_group is not None else ""
 
-                    # Im Python-Skript beim Erstellen der Liste den Artist-Namen mitspeichern:
-            artist_node = entry.find('atom:author/atom:name', NAMESPACES)
-            artist = artist_node.text.replace(' - Topic', '') if artist_node is not None else ""
+            video_id = vid_node.text if vid_node is not None else ""
+            title    = title_node.text if title_node is not None else ""
+            artist   = author_node.text.replace(' - Topic', '') if author_node is not None else ""
+
+            thumbnail_url = ""
+            if media_group is not None:
+                thumb = media_group.find('media:thumbnail', NAMESPACES)
+                if thumb is not None:
+                    thumbnail_url = thumb.attrib.get('url', '')
 
             videos.append({
-                "id": video_id,
-                "title": title,
-                "artist": artist, # Damit befüllen Sie s.artist im JS automatisch sauber!
+                "id":        video_id,
+                "title":     title,
+                "artist":    artist,
                 "thumbnail": thumbnail_url
             })
 
-
-        # NEU: Speichern unter data/music/[PLAYLIST_ID].json
         os.makedirs('data/music', exist_ok=True)
         output_path = f'data/music/{playlist_id}.json'
         with open(output_path, 'w', encoding='utf-8') as f:
             json.dump(videos, f, ensure_ascii=False, indent=2)
-            
-        print(f"Erfolgreich aktualisiert: {playlist_id}")
+
+        print(f"Erfolgreich aktualisiert: {playlist_id} ({len(videos)} Videos)")
 
     except Exception as e:
         print(f"Fehler bei Playlist {playlist_id}: {e}")
+        os.makedirs('data/music', exist_ok=True)
+        output_path = f'data/music/{playlist_id}.json'
+        if not os.path.exists(output_path):
+            with open(output_path, 'w', encoding='utf-8') as f:
+                json.dump([], f)
 
 def main():
     config_path = 'data/config/music.json'
-    
+
     if not os.path.exists(config_path):
         print(f"Fehler: Konfigurationsdatei unter {config_path} nicht gefunden!")
         return
@@ -61,14 +72,13 @@ def main():
         config = json.load(f)
 
     playlist_ids = set()
-    
-    if "favoritesPlaylistId" in config and config["favoritesPlaylistId"]:
+
+    if config.get("favoritesPlaylistId"):
         playlist_ids.add(config["favoritesPlaylistId"])
-        
-    if "playlists" in config:
-        for pl in config["playlists"]:
-            if "id" in pl and pl["id"]:
-                playlist_ids.add(pl["id"])
+
+    for pl in config.get("playlists", []):
+        if pl.get("id"):
+            playlist_ids.add(pl["id"])
 
     print(f"{len(playlist_ids)} Playlists gefunden. Starte Download nach data/music/...")
     for pid in playlist_ids:
