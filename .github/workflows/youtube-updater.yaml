@@ -8,8 +8,10 @@ on:
 jobs:
   update-feed:
     runs-on: ubuntu-latest
-    permissions:
-      contents: write # Wichtig, damit die Action die Datei speichern darf
+      permissions:
+        contents: write
+        id-token: write
+
 
     steps:
     - name: Code auschecken
