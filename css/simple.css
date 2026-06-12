@@ -181,7 +181,7 @@ a#wl-link {
 }
 
 .secret-note {
-  color: var(--paper);
+  color: rgba(224, 131, 88, 0);
   font-style: italic;
   font-size: 13px;
 }
@@ -513,7 +513,7 @@ label {
 
 input, textarea, select {
   width: 100%;
-  background: #080d18;
+  background: #080d1896;
   border: 1px solid var(--line);
   color: var(--ink);
   font-family: inherit;

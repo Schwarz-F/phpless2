@@ -119,7 +119,7 @@ function render(cfg) {
 
     <a id="links"></a>
     <div class="h">where to find me</div>
-    <span class="secret-note">// if you can read this, you've dark reader enabled :)</span>
+    <span class="secret-note">// if you can read this, you've discovered a secret :)</span>
     <div><ul>${linksH}</ul></div>
 
     <a id="watch"></a>
