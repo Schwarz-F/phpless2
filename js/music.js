@@ -48,7 +48,10 @@ async function fetchFeedSongs(playlistId){
     videoId: e.id || e.videoId || ''
   })).filter(s => s.title && s.videoId);
 
-  if (!items.length) throw new Error('Playlist-Datei ist leer');
+  if (!items.length) {
+  console.warn('Alle Items rausgefiltert. Roh-Daten:', localItems.slice(0,2));
+  throw new Error(`Playlist-Datei ist leer (${localItems.length} Einträge, aber alle ohne id/title)`);
+}
   CACHE.set(cacheKey, { t: Date.now(), items });
   return items;
 }
@@ -181,8 +184,8 @@ function npCard(label, title, subs, img){
   </div>`;
 }
 
-async function render(cfg){
-  CFG = cfg;
+async function render(cfg = {}) 
+{  CFG = cfg;
   const pls = Array.isArray(cfg.playlists) ? cfg.playlists : [];
 
   document.getElementById('app').innerHTML = `
@@ -235,3 +238,7 @@ async function render(cfg){
     }
   });
 }
+(async () => {
+  const cfg = await loadConfig();
+  await render(cfg);
+})();
