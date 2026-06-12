@@ -7,7 +7,7 @@ on:
 
 jobs:
   update-feed:
-    runs-runs-on: ubuntu-latest
+    runs-on: ubuntu-latest
     permissions:
       contents: write # Wichtig, damit die Action die Datei speichern darf
 
