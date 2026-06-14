@@ -1,16 +1,16 @@
 {
   "introText": "hier läuft, was bei mir gerade in dauerschleife ist. keine garantie auf guten geschmack.",
-  "favoritesPlaylistId": "PLxxxxxxxx_DEINE_FAVORITEN_PLAYLIST",
+  "favoritesPlaylistId": "PLlwdTst5Z3XxJk3OE2UbLTgy47v3TkKjs",
   "playlists": [
     {
-      "name": "coding loop",
+      "name": "Best of Old",
       "id": "PLlwdTst5Z3Xw7yd6CLZYmVmvE6oquMdzD",
-      "note": "fürs coden"
+      "note": "not to be recommended for coding"
     },
     {
       "name": "A little bit of Japan",
       "id": "PLlwdTst5Z3Xzq3WskIFve3_pPIgru21sv",
-      "note": "(little anime fanboy)"
+      "note": "for when you don't want to understand the lyrics"
     }
   ]
 }

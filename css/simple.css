@@ -609,7 +609,6 @@ footer {
 /* Kompakte Song-Liste (Stil wie YT Music) */
 .song-list {
   max-width: 640px;
-  margin-bottom: 18px;
 }
 
 .song-row {
@@ -679,29 +678,31 @@ footer {
 
 /* Favoriten-Liste oben im selben Glas-Look */
 #fav-list {
-  border: 2px solid var(--line);
-  background: rgba(63, 70, 88, 0.35);
+  border: 1px solid var(--line);
+  background: #080d1879;
   backdrop-filter: blur(12px) saturate(1.2);
   -webkit-backdrop-filter: blur(12px) saturate(1.2);
-  box-shadow: 5px 5px 0 rgba(0, 0, 0, 0.55);
-  padding: 4px 12px;
+  padding: 0px 7px;
   max-width: 640px;
+}
+#fav-list:hover {
+  background: rgba(8, 13, 24, 0.089);
+  border-color: rgba(191, 218, 255, 0.35);
 }
 
 /* Aufklappbare Playlists mit 2x2-Cover-Collage + Frosted-Glass */
 .pl-item {
-  border: 2px solid var(--line);
-  background: rgba(63, 70, 88, 0.35);
+  border: 1px solid var(--line);
+  background: #080d1879;
   backdrop-filter: blur(12px) saturate(1.2);
   -webkit-backdrop-filter: blur(12px) saturate(1.2);
-  box-shadow: 5px 5px 0 rgba(0, 0, 0, 0.55);
   margin-bottom: 14px;
   max-width: 640px;
   transition: background 0.15s, border-color 0.15s;
 }
 
 .pl-item:hover {
-  background: rgba(80, 90, 115, 0.45);
+  background: rgba(8, 13, 24, 0.089);
   border-color: rgba(191, 218, 255, 0.35);
 }
 
@@ -782,13 +783,13 @@ footer {
 
 /* Aufgeklappter Bereich mit leicht dunklerem Glas-Layer */
 .pl-body {
-  margin: 0 10px;
-  padding: 8px 8px 10px;
-  border-top: 1px dashed var(--line);
+  margin: 10px 10px;
+  padding: 0px 8px 0px;
   background: rgba(8, 13, 24, 0.35);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
 }
+
 /* Farbiger Hintergrund, damit der Glas-Effekt sichtbar wird */
 body.music-bg {
   background-image:
@@ -803,11 +804,10 @@ body.music-bg {
   display: flex;
   gap: 12px;
   align-items: center;
-  border: 2px solid var(--line);
-  background: rgba(63, 70, 88, 0.35);
+  border: 1px solid var(--line);
+  background: #080d1879;
   backdrop-filter: blur(12px) saturate(1.2);
   -webkit-backdrop-filter: blur(12px) saturate(1.2);
-  box-shadow: 5px 5px 0 rgba(0, 0, 0, 0.55);
   padding: 10px;
   max-width: 640px;
 }

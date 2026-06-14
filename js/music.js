@@ -77,7 +77,7 @@ function playlistRow(p, i){
         ${p.note ? `<span class="pl-note">// ${esc(p.note)}</span>` : ''}
       </span>
       <span class="pl-toggle" id="pl-toggle-${i}">[+]</span>
-      <a class="pl-open" href="https://music.youtube.com/playlist?list=${esc(p.id)}" target="_blank" rel="noopener" onclick="event.stopPropagation()">öffnen ↗</a>
+      <a class="pl-open" href="https://music.youtube.com/playlist?list=${esc(p.id)}" target="_blank" rel="noopener" onclick="event.stopPropagation()">open ↗</a>
     </div>
     <div class="pl-body" id="pl-body-${i}" hidden><span class="note">— lädt —</span></div>
   </div>`;
@@ -210,7 +210,9 @@ async function render(cfg = {})
     <div class="h">ausgewählte playlists</div>
     <span class="note">// draufklicken zum aufklappen</span>
     <div style="margin-top:12px" id="pl-list">${pls.map(playlistRow).join('') || '<span class="note">— keine playlists gefunden —</span>'}</div>
-  `;
+  <footer>idk what to write here · ${new Date().getFullYear()}</footer>
+
+    `;
 
   // Start der Datenabrufe
   fetchNowPlaying();
