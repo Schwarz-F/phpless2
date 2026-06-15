@@ -132,7 +132,7 @@ function render(cfg) {
     <span class="note">// 88 × 31 px of sth. </span>
     <div style="margin-top:10px"><div class="wb-wall" id="wb-wall"><span class="note">— lädt —</span></div></div>
 
-    <footer>idk what to write here · ${new Date().getFullYear()}</footer>
+        
   `;
 }
 
@@ -191,7 +191,13 @@ async function loadBadges(){
     : '<span class="note">— noch keine —</span>';
 }
 
-loadConfig().then(render).then(fetchDiscord).then(loadBadges).catch(e=>{
-  document.getElementById('app').innerHTML='<span class="err">// hoppla, config kaputt</span>';
-  console.error(e);
-});
+loadConfig()
+  .then(cfg => {
+    render(cfg);
+    fetchDiscord();
+    loadBadges();
+    
+    // NEU: Signalisiert anderen Skripten, dass die App fertig gerendert ist
+    document.dispatchEvent(new Event('app-rendered'));
+  })
+  .catch(e => { /* ... */ });

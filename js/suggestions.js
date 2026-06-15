@@ -64,4 +64,18 @@ function submit(){
   }, 800);
 }
 
+document.addEventListener('DOMContentLoaded', () => {
+  // 1. Prüfen, ob die Elemente überhaupt auf dieser Seite existieren
+  if ($('cap-label') && $('sg-captcha')) {
+    newCaptcha();
+  }
+
+  const sendBtn = $('sg-send');
+  if (sendBtn) {
+    sendBtn.onclick = submit;
+  }
+
+  // 2. ERST WENN ALLES BEREIT IST: Das Signal für den Footer abfeuern
+  document.dispatchEvent(new Event('app-rendered'));
+});
 $('sg-send').onclick=submit;

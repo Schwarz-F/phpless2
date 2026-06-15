@@ -25,6 +25,8 @@ async function loadConfig() {
   } catch (e) {
     console.error('config.json nicht ladbar:', e);
   }
+
+  // HIER ENTFERNT! Das Event darf hier nicht stehen.
   return { ...ocfg, ...cfg };
 }
 
@@ -148,8 +150,15 @@ async function fetchNowPlaying(){
     const listening = acts.find(a => a.type === 2 && !sp);
     const game = acts.find(a => a.type === 0);
 
-    if (sp) {
-      el.innerHTML = npCard('♫ hört gerade', sp.song, [sp.artist], sp.album_art_url);
+       if (sp) {
+      // Bei Spotify: präzise Suche mit Song + Artist
+      el.innerHTML = npCard(
+        '♫ hört gerade',
+        sp.song,
+        [sp.artist],
+        sp.album_art_url,
+        `${sp.song} ${sp.artist}`
+      );
     } else if (listening) {
       const img = listening.assets && listening.assets.large_image
         ? actImg(listening.application_id, listening.assets.large_image) : '';
@@ -157,12 +166,14 @@ async function fetchNowPlaying(){
         '',
         listening.details || listening.name,
         [listening.state, listening.assets?.large_text],
-        img
+        img,
+        `${listening.details || listening.name} ${listening.state || ''}`
       );
     } else if (game) {
+      // Spiele NICHT verlinken (kein YT-Music-Sinn) -> kein searchQuery
       const img = game.assets && game.assets.large_image
         ? actImg(game.application_id, game.assets.large_image) : '';
-      el.innerHTML = npCard('▶ spielt gerade', game.name, [game.details, game.state], img);
+      el.innerHTML = npCard('▶ spielt gerade', game.name, [game.details, game.state], img, '');
     } else {
       el.innerHTML = '<span class="note">— gerade nix am laufen —</span>';
     }
@@ -173,15 +184,25 @@ async function fetchNowPlaying(){
   setTimeout(fetchNowPlaying, 30000);
 }
 
-function npCard(label, title, subs, img){
-  return `<div class="np-card">
+function npCard(label, title, subs, img, searchQuery){
+  // YouTube-Music-Suchlink aus Titel + erstem Sub (meist Artist) bauen
+  const query = searchQuery || [title, (subs || [])[0]].filter(Boolean).join(' ');
+  const ytmUrl = query
+    ? `https://music.youtube.com/search?q=${encodeURIComponent(query)}`
+    : '';
+
+  const inner = `
     ${img ? `<span class="np-thumb"><img src="${esc(img)}" alt=""></span>` : ''}
     <span class="np-meta">
       <span class="np-label">${label}</span>
       <span class="np-title">${esc(title)}</span>
       ${(subs || []).filter(Boolean).map(s => `<span class="np-sub">${esc(s)}</span>`).join('')}
-    </span>
-  </div>`;
+    </span>`;
+
+  // Wenn ein Suchlink existiert -> als klickbaren Link rendern, sonst als div
+  return ytmUrl
+    ? `<a class="np-card np-link" href="${esc(ytmUrl)}" target="_blank" rel="noopener" title="auf youtube music öffnen ↗">${inner}<span class="np-open">↗</span></a>`
+    : `<div class="np-card">${inner}</div>`;
 }
 
 async function render(cfg = {}) 
@@ -197,21 +218,19 @@ async function render(cfg = {})
     ${cfg.introText ? `<div class="quote">${esc(cfg.introText)}</div>` : ''}
 
     <a id="now"></a>
-    <div class="h">aktuell am laufen</div>
-    <span class="note">// live via discord</span>
+    <div class="h">Currently playing</div>
+    <span class="note"></span>
     <div id="np-box" style="margin-top:12px"><span class="note">— lädt —</span></div>
 
     <a id="favs"></a>
-    <div class="h">aktuelle lieblingssongs</div>
-    <span class="note">// live von youtube gezogen</span>
+    <div class="h">favorites</div>
+    <span class="note">// may be outdated</span>
     <div class="song-list" id="fav-list" style="margin-top:12px"><span class="note">— lädt —</span></div>
 
     <a id="playlists"></a>
-    <div class="h">ausgewählte playlists</div>
-    <span class="note">// draufklicken zum aufklappen</span>
-    <div style="margin-top:12px" id="pl-list">${pls.map(playlistRow).join('') || '<span class="note">— keine playlists gefunden —</span>'}</div>
-  <footer>idk what to write here · ${new Date().getFullYear()}</footer>
-
+    <div class="h">Selected Playlists</div>
+    <span class="note">// just the first 15 songs, youtube rss limit and so</span>
+    <div style="margin-top:12px" id="pl-list">${pls.map(playlistRow).join('') || '<span class="note">— no playlists found —</span>'}</div>
     `;
 
   // Start der Datenabrufe
@@ -241,6 +260,14 @@ async function render(cfg = {})
   });
 }
 (async () => {
-  const cfg = await loadConfig();
-  await render(cfg);
+  try {
+    const cfg = await loadConfig();
+    await render(cfg);
+    
+    // JETZT IST DIE SEITE FERTIG: Signalisiere global.js, den Footer zu bauen!
+    document.dispatchEvent(new Event('app-rendered'));
+  } catch (error) {
+    console.error("Fehler beim Initialisieren der Musik-App:", error);
+  }
 })();
+  

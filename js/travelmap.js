@@ -196,6 +196,7 @@ document.getElementById('lightbox').addEventListener('click', function () { this
 (async () => {
   initMap();
   const places = await loadPlaces();
+  document.dispatchEvent(new Event('app-rendered'));
   render(places);
 })().catch(e => {
   document.getElementById('place-list').innerHTML = '<li class="err">// fehler beim laden</li>';

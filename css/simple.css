@@ -683,11 +683,13 @@ footer {
   backdrop-filter: blur(12px) saturate(1.2);
   -webkit-backdrop-filter: blur(12px) saturate(1.2);
   padding: 0px 7px;
+  transition: opacity .15s ease, border-color .15s ease, background .15s ease;
   max-width: 640px;
 }
 #fav-list:hover {
+  
   background: rgba(8, 13, 24, 0.089);
-  border-color: rgba(191, 218, 255, 0.35);
+  border-color: var(--teal);
 }
 
 /* Aufklappbare Playlists mit 2x2-Cover-Collage + Frosted-Glass */
@@ -703,7 +705,7 @@ footer {
 
 .pl-item:hover {
   background: rgba(8, 13, 24, 0.089);
-  border-color: rgba(191, 218, 255, 0.35);
+  border-color: var(--teal);
 }
 
 .pl-head {
@@ -811,6 +813,24 @@ body.music-bg {
   padding: 10px;
   max-width: 640px;
 }
+
+/* Klickbare Variante (wenn ein Song läuft) */
+.np-link {
+  text-decoration: none;
+  color: inherit;
+  cursor: pointer;
+  position: relative;
+  transition: opacity .15s ease, border-color .15s ease, background .15s ease;
+}
+.np-link:hover {
+  opacity: .92;
+  border-color: var(--teal);
+  background: rgba(8, 13, 24, 0.089);
+}
+.np-link:hover .np-title {
+  color: var(--rust);
+}
+
 .np-thumb {
   width: 56px;
   height: 56px;
@@ -844,10 +864,124 @@ body.music-bg {
   overflow: hidden;
   text-overflow: ellipsis;
 }
+.np-title:hover {
+  color: var(--rust);
+}
 .np-sub {
   color: var(--faded);
   font-size: 12px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+/* Öffnen-Pfeil rechts in der klickbaren Karte */
+.np-open {
+  margin-left: auto;
+  padding-left: 12px;
+  align-self: center;
+  color: var(--faded);
+  font-size: 13px;
+  opacity: .5;
+  flex-shrink: 0;
+  transition: opacity .15s ease, color .15s ease;
+}
+.np-link:hover .np-open {
+  opacity: 1;
+  color: var(--teal);
+
+}
+/* ==========================================================================
+   13. CRT MODE  —  toggle via <html class="crt">
+   ========================================================================== */
+
+html.crt body {
+  filter: contrast(1.08) brightness(1.05) saturate(1.15);
+  animation: crt-flicker 0.15s infinite;
+}
+
+/* Scanlines (horizontale Linien) */
+html.crt body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 9998;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    to bottom,
+    rgba(0,0,0,0)   0px,
+    rgba(0,0,0,0)   1px,
+    rgba(0,0,0,0.18) 1px,
+    rgba(0,0,0,0.18) 2px
+  );
+  animation: crt-scan 8s linear infinite;
+}
+
+/* RGB-Subpixel-Maske + Vignette */
+html.crt body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  pointer-events: none;
+  background:
+    repeating-linear-gradient(
+      to right,
+      rgba(255,0,0,0.04) 0px,
+      rgba(0,255,0,0.02) 1px,
+      rgba(0,0,255,0.04) 2px,
+      rgba(0,0,0,0)      3px
+    ),
+    radial-gradient(
+      ellipse at center,
+      rgba(0,0,0,0) 55%,
+      rgba(0,0,0,0.45) 100%
+    );
+}
+
+@keyframes crt-flicker {
+  0%   { opacity: 1; }
+  50%  { opacity: 0.985; }
+  100% { opacity: 1; }
+}
+
+@keyframes crt-scan {
+  0%   { background-position: 0 0; }
+  100% { background-position: 0 100px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html.crt body,
+  html.crt body::before {
+    animation: none;
+  }
+}
+
+/* CRT-Toggle: extrem dezent, sitzt im Footer */
+.crt-toggle {
+  background: none;
+  border: none;
+  box-shadow: none;
+  margin: 0;
+  padding: 0;
+  font-family: inherit;
+  font-size: 11px;
+  color: var(--faded);
+  opacity: 0.35;
+  cursor: pointer;
+  transition: opacity 0.15s, color 0.15s;
+  letter-spacing: 0.5px;
+}
+.crt-toggle:hover {
+  opacity: 1;
+  color: var(--rust);
+  transform: none;
+}
+html.crt .wl li,
+html.crt .place,
+html.crt .song-row,
+html.crt .main,
+html.crt footer {
+  transform: translateZ(0);
+  backface-visibility: hidden;
 }
