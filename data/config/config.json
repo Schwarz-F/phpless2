@@ -103,32 +103,6 @@
       "dcStatus": false
     }
   ],
-  "watchlist": [
-    {
-      "title": "Classroom of the Elite",
-      "type": "Anime",
-      "status": "watching",
-      "ep": "S4/E6"
-    },
-    {
-      "title": "Modern Family",
-      "type": "Serie",
-      "status": "watching",
-      "ep": "S1/E11"
-    },
-    {
-      "title": "Mr. Robot",
-      "type": "Serie",
-      "status": "completed",
-      "ep": "45/45"
-    },
-    {
-      "title": "Dark",
-      "type": "Serie",
-      "status": "completed",
-      "ep": "26/26"
-    }
-  ],
   "customWindows": [
     {
       "id": "cw_1780475001304",
