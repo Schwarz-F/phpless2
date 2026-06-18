@@ -1,9 +1,7 @@
-// 1. CRT-Modus sofort beim Laden prüfen (verhindert weißes Aufblitzen)
 if (localStorage.getItem('crt-mode') === '1') {
   document.documentElement.classList.add('crt');
 }
 
-// 2. Text des Buttons updaten ([ crt: on ] oder [ crt: off ])
 function syncCrtLabel() {
   const btn = document.getElementById('theme-toggle');
   if (!btn) return;
@@ -14,7 +12,6 @@ function syncCrtLabel() {
 
 }
 
-// 3. Globaler Click-Listener (Event Delegation für dynamische Buttons)
 document.addEventListener('click', function (e) {
   const btn = e.target.closest('#theme-toggle');
   if (!btn) return;
@@ -24,17 +21,22 @@ document.addEventListener('click', function (e) {
   syncCrtLabel();
 });
 
-// 4. Universelle Funktion zum Anhängen des Footers
-function appendFooter() {
+async function appendFooter() {
+  var viewcounter = localStorage.getItem('visitor_count') || '0';
+  if (document.location.href.includes('index.html')) {
+     viewcounter = await fetch('https://hitscounter.dev/api/hit?url=webv1.fabitx.de').then(res => res.text()).then(text => text.split('/')[10].replace('<', '')).catch(() => '0');
+    console.log(`Visitor count: ${viewcounter}`);
+    localStorage.setItem('visitor_count', viewcounter);
+  }
+
   const app = document.getElementById('app');
   if (!app || document.getElementById('theme-toggle')) return; // Falls schon da, abbrechen
-
-  const footerHTML = `<footer>idk what to write here · ${new Date().getFullYear()} · <button id="theme-toggle" class="crt-toggle" type="button">crt</button></footer>`;
+  console.log(`Visitor count: ${viewcounter}`);
+  const footerHTML = `<footer>idk what to write here · ${new Date().getFullYear()} · <button id="theme-toggle" class="crt-toggle" type="button">crt</button> · Visitor count: ${viewcounter}</footer>`;
   app.insertAdjacentHTML('beforeend', footerHTML);
 
   syncCrtLabel();
 }
 
-// Höre auf das Event von index.js oder music.js
 document.addEventListener('app-rendered', appendFooter);
 document.addEventListener('DOMContentLoaded', syncCrtLabel);

@@ -18,6 +18,15 @@ function initMap() {
     closeGallery();
   });
 }
+function toggleTripGroup(id) {
+  const ul = document.getElementById(id);
+  const arrow = document.getElementById('arrow-' + id);
+  if (!ul) return;
+  const open = ul.style.display !== 'none';
+  ul.style.display = open ? 'none' : 'block';
+  if (arrow) arrow.textContent = open ? '▸' : '▾';
+}
+window.toggleTripGroup = toggleTripGroup;
 
 async function loadPlaces() {
   try {
@@ -33,44 +42,98 @@ async function loadPlaces() {
 function render(places) {
   const list = document.getElementById('place-list');
 
-  // Listeneinträge rendern
-  list.innerHTML = places.map((p, i) => {
-    const dc = p.status || 'visited';
-    return `<li class="place" id="place-item-${i}">
-      <span class="dot ${dc}"></span>
-      <span class="city" style="cursor:pointer; font-weight:bold;" onclick="focusPlace(${i})">${esc(p.city)}</span>
-      <span class="meta">${esc(p.country || '')}${p.note ? ' · ' + esc(p.note) : ''}${p.status === 'want' ? ' · (geplant)' : ''}</span>
-      <span class="times"style="margin-left: 10px;float:right;">${!p.count ? `${p.dates.length}x` : `${esc(p.count || '')}`}</span>
-      <div class="folder-container" style="display:none;"></div>
-    </li>`;
+  // --- Gruppierung nach Trip-Label (Reihenfolge des ersten Auftretens) ---
+  const groups = [];          // [{ trip: "USA 2025"|null, items: [{p, i}] }]
+  const groupIndex = {};
+  places.forEach((p, i) => {
+    const key = (p.trip && String(p.trip).trim()) || null;
+    const mapKey = key === null ? `__single_${i}` : `trip_${key}`;
+    if (!(mapKey in groupIndex)) {
+      groupIndex[mapKey] = groups.length;
+      groups.push({ trip: key, items: [] });
+    }
+    groups[groupIndex[mapKey]].items.push({ p, i });
+  });
+
+  // --- Listeneinträge rendern ---
+  list.innerHTML = groups.map(g => {
+    const itemsHtml = g.items.map(({ p, i }) => {
+      const dc = p.status || 'visited';
+      const cnt = !p.count ? `${(p.dates || []).length}x` : `${esc(p.count || '')}`;
+      return `<li class="place" id="place-item-${i}">
+        <span class="dot ${dc}"></span>
+        <span class="city" style="cursor:pointer; font-weight:bold;" onclick="focusPlace(${i})">${esc(p.city)}</span>
+        <span class="meta">${esc(p.country || '')}${p.note ? ' · ' + esc(p.note) : ''}${p.status === 'want' ? ' · (geplant)' : ''}</span>
+        <span class="times" style="margin-left: 10px;float:right;">${cnt}</span>
+        <div class="folder-container" style="display:none;"></div>
+      </li>`;
+    }).join('');
+
+    // Trip-Gruppe mit Überschrift, Einzelorte ohne
+    if (g.trip) {
+  const safeId = 'trip_' + esc(g.trip).replace(/[^a-zA-Z0-9]/g, '_');
+  return `<li class="trip-group">
+    <div class="trip-group-title"
+         style="font-weight:bold; opacity:.8; margin-top:8px; cursor:pointer; user-select:none;"
+         onclick="toggleTripGroup('${safeId}')">
+      <span class="trip-arrow" id="arrow-${safeId}">▸</span> ${esc(g.trip)}
+    </div>
+    <ul class="trip-group-list" id="${safeId}"
+        style="list-style:none; margin:0; padding-left:10px; display:none;">${itemsHtml}</ul>
+  </li>`;
+}
+return itemsHtml;
+    return itemsHtml;
   }).join('');
 
-  // Marker auf der Karte setzen
+  // --- Marker auf der Karte setzen (unverändert, Original-Index i) ---
   places.forEach((p, i) => {
     if (typeof p.lat !== 'number' || typeof p.lon !== 'number') return;
     const color = COLORS[p.status] || '#4fc7ad';
     const m = L.circleMarker([p.lat, p.lon], { radius: 7, color: '#000', weight: 1, fillColor: color, fillOpacity: .9 }).addTo(map);
-
     let popupContent = `<b>${esc(p.city)}</b>${p.country ? ' (' + esc(p.country) + ')' : ''}`;
+    if (p.trip) popupContent += `<br><small>${esc(p.trip)}</small>`;
     if (p.note) popupContent += `<br>${esc(p.note)}`;
-    
-    // Bedingung erweitert: Zeigt den Hinweis auch an, wenn globale Bilder existieren
     if ((p.dates && p.dates.length > 0) || (p.images && p.images.length > 0)) {
       popupContent += `<br><i>Klick für Infos ${p.images.length > 0 ? "& Fotos" : ""}</i>`;
     }
-
     m.bindPopup(popupContent);
     m.on('click', () => loadGallery(p, i));
-
     markers[i] = m;
   });
+  // --- Explizite Verbindungslinien (Lesart 2: routeTo) ---
+  // Stadt-Name → Koordinaten (erste passende Stadt gewinnt)
+  const cityCoords = {};
+  places.forEach(p => {
+    if (typeof p.lat === 'number' && typeof p.lon === 'number' && p.city) {
+      const key = String(p.city).trim().toLowerCase();
+      if (!(key in cityCoords)) cityCoords[key] = [p.lat, p.lon];
+    }
+  });
 
+  places.forEach(p => {
+    if (!p.routeTo) return;
+    // routeTo darf String ODER Array sein
+    const targets = Array.isArray(p.routeTo) ? p.routeTo : [p.routeTo];
+    if (typeof p.lat !== 'number' || typeof p.lon !== 'number') return;
+
+    targets.forEach(targetCity => {
+      if (!targetCity) return;
+      const dst = cityCoords[String(targetCity).trim().toLowerCase()];
+      if (!dst) return;   // Zielstadt nicht gefunden → keine Linie
+      L.polyline([[p.lat, p.lon], dst], {
+        color: '#4fc7ad',
+        weight: 2,
+        opacity: 0.7,
+        dashArray: '6, 6'
+      }).addTo(map);
+    });
+  });
   const pts = places.filter(p => typeof p.lat === 'number').map(p => [p.lat, p.lon]);
   if (pts.length) map.fitBounds(pts, { padding: [40, 40], maxZoom: 6 });
 
   window._places = places;
 }
-
 function focusPlace(i) {
   const m = markers[i]; if (!m) return;
   if (currentOpenPlaceIndex === i) {

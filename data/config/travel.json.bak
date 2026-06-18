@@ -1,29 +1,41 @@
 [
   {
-    "city": "Berlin",
-    "country": "Deutschland",
-    "lat": 52.52,
-    "lon": 13.405,
+    "city": "New York",
+    "country": "USA",
+    "lat": 40.7128,
+    "lon": -74.006,
     "status": "visited",
-    "note": "Hauptstadt-Trips",
+    "trip": "USA 2025",
+    "routeTo": [
+      "Washington"
+    ],
+    "dates": [],
+    "images": []
+  },
+  {
+    "city": "Washington",
+    "country": "USA",
+    "lat": 38.9072,
+    "lon": -77.0369,
+    "status": "visited",
+    "trip": "USA 2025",
+    "routeTo": [
+      "Boston"
+    ],
+    "dates": [],
+    "images": []
+  },
+  {
+    "city": "Boston",
+    "country": "USA",
+    "lat": 42.3601,
+    "lon": -71.0589,
+    "status": "visited",
+    "note": "",
     "count": "",
     "picturecaption": "",
-    "dates": [
-      {
-        "from": "15.05.2024",
-        "to": "20.05.2024",
-        "comment": "Server im Rechenzentrum getauscht.",
-        "images": []
-      },
-      {
-        "from": "02.01.2026",
-        "to": "06.01.2026",
-        "comment": "Silvester/Neujahr nachgefeiert.",
-        "images": [
-          "./data/files/Travel/Berlin/02.01.2026/Unbenannt.PNG"
-        ]
-      }
-    ],
+    "trip": "USA 2025",
+    "dates": [],
     "images": []
   },
   {
@@ -32,12 +44,63 @@
     "lat": 51.08099,
     "lon": 6.31607,
     "status": "home",
-    "note": "Zuhause",
+    "note": "",
     "count": "immer",
-    "picturecaption": "David Montes",
+    "picturecaption": "",
+    "trip": "",
     "dates": [],
-    "images": [
-      "./data/files/Travel/Erkelenz/20220328_1258475623-scaled.jpg.png"
-    ]
+    "images": []
+  },
+  {
+    "city": "Berlin",
+    "country": "Deutschland",
+    "lat": 52.51739,
+    "lon": 13.39513,
+    "status": "visited",
+    "note": "",
+    "count": "3x",
+    "picturecaption": "",
+    "trip": "",
+    "dates": [],
+    "images": []
+  },
+  {
+    "city": "London",
+    "country": "United-Kingdom",
+    "lat": 51.50745,
+    "lon": -0.12777,
+    "status": "visited",
+    "note": "",
+    "count": "2x",
+    "picturecaption": "",
+    "trip": "",
+    "dates": [],
+    "images": []
+  },
+  {
+    "city": "Den Haag",
+    "country": "Niederlande",
+    "lat": 52.07998,
+    "lon": 4.31135,
+    "status": "visited",
+    "note": "",
+    "count": "",
+    "picturecaption": "",
+    "trip": "",
+    "dates": [],
+    "images": []
+  },
+  {
+    "city": "München",
+    "country": "Deutschland",
+    "lat": 48.13711,
+    "lon": 11.57538,
+    "status": "visited",
+    "note": "",
+    "count": "",
+    "picturecaption": "",
+    "trip": "",
+    "dates": [],
+    "images": []
   }
 ]
