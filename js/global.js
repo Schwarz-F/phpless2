@@ -23,7 +23,7 @@ document.addEventListener('click', function (e) {
 
 async function appendFooter() {
   var viewcounter = localStorage.getItem('visitor_count') || '0';
-  if (document.location.href.includes('index.html')) {
+  if (document.location.href.includes('index.html')||!document.location.href.includes('.html')) { {
      viewcounter = await fetch('https://hitscounter.dev/api/hit?url=webv1.fabitx.de').then(res => res.text()).then(text => text.split('/')[10].replace('<', '')).catch(() => '0');
     console.log(`Visitor count: ${viewcounter}`);
     localStorage.setItem('visitor_count', viewcounter);
