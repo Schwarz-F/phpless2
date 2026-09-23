@@ -47,7 +47,7 @@
     "note": "",
     "count": "home",
     "picturecaption": "",
-    "trip": "",
+    "trip": "Germany",
     "dates": [],
     "images": []
   },
@@ -61,7 +61,14 @@
     "count": "3x",
     "picturecaption": "",
     "trip": "Germany",
-    "dates": [],
+    "dates": [
+      {
+        "from": "04.09.2026",
+        "to": "06.09.2026",
+        "comment": "IFA 2026",
+        "images": []
+      }
+    ],
     "images": []
   },
   {
@@ -100,6 +107,126 @@
     "count": "1x",
     "picturecaption": "",
     "trip": "Germany",
+    "dates": [],
+    "images": []
+  },
+  {
+    "city": "Rotterdam",
+    "country": "Niederlande",
+    "lat": 51.92444,
+    "lon": 4.47775,
+    "status": "visited",
+    "note": "",
+    "count": "2x",
+    "picturecaption": "",
+    "trip": "Daytrips",
+    "dates": [
+      {
+        "from": "20.09.2026",
+        "to": "",
+        "comment": "Part of my Daytrip",
+        "images": []
+      }
+    ],
+    "images": []
+  },
+  {
+    "city": "Amsterdam",
+    "country": "Niederlande",
+    "lat": 52.37308,
+    "lon": 4.89245,
+    "status": "visited",
+    "note": "",
+    "count": "2x",
+    "picturecaption": "",
+    "trip": "Daytrips",
+    "routeTo": [
+      "Rotterdam"
+    ],
+    "dates": [
+      {
+        "from": "20.09.2026",
+        "to": "",
+        "comment": "Part of my Daytrip",
+        "images": []
+      },
+      {
+        "from": "13.09.2026",
+        "to": "",
+        "comment": "IBC 2026",
+        "images": []
+      }
+    ],
+    "images": []
+  },
+  {
+    "city": "Antwerpen",
+    "country": "Belgien",
+    "lat": 51.22111,
+    "lon": 4.39971,
+    "status": "visited",
+    "note": "",
+    "count": "1x",
+    "picturecaption": "",
+    "trip": "Daytrips",
+    "routeTo": [
+      "Rotterdam"
+    ],
+    "dates": [
+      {
+        "from": "20.09.2026",
+        "to": "",
+        "comment": "Part of my Daytrip",
+        "images": []
+      }
+    ],
+    "images": []
+  },
+  {
+    "city": "Paris",
+    "country": "Frankreich",
+    "lat": 48.8535,
+    "lon": 2.34839,
+    "status": "visited",
+    "note": "",
+    "count": "1x",
+    "picturecaption": "",
+    "trip": "Interrail 2026",
+    "routeTo": [
+      "Nizza"
+    ],
+    "dates": [],
+    "images": []
+  },
+  {
+    "city": "Nizza",
+    "country": "Frankreich",
+    "lat": 43.70094,
+    "lon": 7.26839,
+    "status": "visited",
+    "note": "",
+    "count": "1x",
+    "picturecaption": "",
+    "trip": "Interrail 2026",
+    "routeTo": [
+      "Paris"
+    ],
+    "dates": [],
+    "images": []
+  },
+  {
+    "city": "Mailand",
+    "country": "Italien",
+    "lat": 45.46419,
+    "lon": 9.18963,
+    "status": "visited",
+    "note": "",
+    "count": "1x",
+    "picturecaption": "",
+    "trip": "Interrail 2026",
+    "routeTo": [
+      "Nizza"
+    ],
     "dates": [],
     "images": []
   }

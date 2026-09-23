@@ -8,7 +8,7 @@ let currentOpenPlaceIndex = null;
 
 function initMap() {
   map = L.map('map', { worldCopyJump: true, minZoom: 2 }).setView([45, 15], 3);
-  L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+  L.tileLayer('https://tiles.stadiamaps.com/tiles/alidade_smooth_dark/{z}/{x}/{y}{r}.png', {
     attribution: '&copy; OpenStreetMap &copy; CARTO',
     subdomains: 'abcd',
     maxZoom: 19
