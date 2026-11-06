@@ -8,11 +8,11 @@ let currentOpenPlaceIndex = null;
 
 function initMap() {
   map = L.map('map', { worldCopyJump: true, minZoom: 2 }).setView([45, 15], 3);
-  L.tileLayer('https://tiles.stadiamaps.com/tiles/alidade_smooth_dark/{z}/{x}/{y}{r}.png', {
-    attribution: '&copy; OpenStreetMap &copy; CARTO',
-    subdomains: 'abcd',
-    maxZoom: 19
-  }).addTo(map);
+  L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 19,
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+    referrerPolicy: 'strict-origin-when-cross-origin'
+}).addTo(map);
 
   map.on('popupclose', function () {
     closeGallery();
